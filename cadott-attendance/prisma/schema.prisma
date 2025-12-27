@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PracticeType {
+  PRACTICE
+  GAME
+  OTHER
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  EXCUSED
+}
+
+model Team {
+  id           String     @id @default(cuid())
+  name         String
+  level        String
+  gradeRange   String
+  pin          String
+  seasonLabel  String     @default("2025")
+  googleSheetUrl String?
+  athletes     Athlete[]
+  practices    Practice[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Athlete {
+  id          String       @id @default(cuid())
+  teamId      String
+  team        Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  fullName    String
+  grade       String
+  jerseyNumber String
+  attendance  Attendance[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Practice {
+  id         String       @id @default(cuid())
+  teamId     String
+  team       Team         @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  date       DateTime
+  type       PracticeType @default(PRACTICE)
+  title      String?
+  attendance Attendance[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
+model Attendance {
+  id         String           @id @default(cuid())
+  athleteId  String
+  practiceId String
+  athlete    Athlete          @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  practice   Practice         @relation(fields: [practiceId], references: [id], onDelete: Cascade)
+  status     AttendanceStatus @default(ABSENT)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@unique([athleteId, practiceId])
+}
