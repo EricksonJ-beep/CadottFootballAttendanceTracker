@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { requireTeamAccess } from "@/lib/team-access";
 import { prisma } from "@/lib/prisma";
-import AttendanceCard from "./attendance-card";
+import AttendanceGrid from "./attendance-grid";
 
 type PracticeCheckInPageProps = {
   params: { teamId: string; practiceId: string };
@@ -51,6 +51,14 @@ export default async function PracticeCheckInPage({
     );
   }
 
+  const attendanceRecords = practice.attendance.map((record) => ({
+    attendanceId: record.id,
+    fullName: record.athlete.fullName,
+    grade: record.athlete.grade,
+    jerseyNumber: record.athlete.jerseyNumber,
+    status: record.status,
+  }));
+
   return (
     <div className="page-shell px-6 py-10 sm:px-10">
       <section className="mx-auto w-full max-w-6xl">
@@ -80,28 +88,19 @@ export default async function PracticeCheckInPage({
           </p>
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {practice.attendance.length === 0 ? (
-            <div className="surface p-6">
-              <p className="text-sm text-[color:var(--color-accent-dark)]/70">
-                No athletes in the roster yet. Add them first.
-              </p>
-            </div>
-          ) : (
-            practice.attendance.map((record) => (
-              <AttendanceCard
-                key={record.id}
-                teamId={teamId}
-                practiceId={practiceId}
-                attendanceId={record.id}
-                fullName={record.athlete.fullName}
-                grade={record.athlete.grade}
-                jerseyNumber={record.athlete.jerseyNumber}
-                status={record.status}
-              />
-            ))
-          )}
-        </div>
+        {attendanceRecords.length === 0 ? (
+          <div className="mt-6 surface p-6">
+            <p className="text-sm text-[color:var(--color-accent-dark)]/70">
+              No athletes in the roster yet. Add them first.
+            </p>
+          </div>
+        ) : (
+          <AttendanceGrid
+            teamId={teamId}
+            practiceId={practiceId}
+            records={attendanceRecords}
+          />
+        )}
       </section>
     </div>
   );

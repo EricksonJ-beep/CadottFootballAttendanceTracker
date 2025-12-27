@@ -23,6 +23,7 @@ Mobile-first attendance tracker for Cadott Football Program teams.
 2. Set up environment variables in `.env`:
    - `DATABASE_URL` (Postgres connection string)
    - `PIN_SECRET` (any random string)
+   - `ADMIN_PIN` (admin-only PIN for `/admin`)
 3. Generate Prisma client and run migrations:
    ```bash
    npx prisma migrate dev --name init
