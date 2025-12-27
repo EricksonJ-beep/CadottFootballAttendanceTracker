@@ -23,7 +23,8 @@ export async function GET(
     return new NextResponse("Team not found", { status: 404 });
   }
 
-  const cookieValue = cookies().get(accessCookieName(teamId))?.value;
+  const cookieStore = await cookies();
+  const cookieValue = cookieStore.get(accessCookieName(teamId))?.value;
   const expected = signPin(team.pin, getPinSecret());
 
   if (!cookieValue || cookieValue !== expected) {
