@@ -16,7 +16,8 @@ export async function requireTeamAccess(teamId: string) {
     redirect("/");
   }
 
-  const cookieValue = cookies().get(accessCookieName(teamId))?.value;
+  const cookieStore = await cookies();
+  const cookieValue = cookieStore.get(accessCookieName(teamId))?.value;
   const expected = signPin(team.pin, getPinSecret());
 
   if (!cookieValue || cookieValue !== expected) {

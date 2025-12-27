@@ -27,7 +27,8 @@ export async function verifyTeamPin(
   }
 
   const signature = signPin(pin, getPinSecret());
-  cookies().set(accessCookieName(teamId), signature, {
+  const cookieStore = await cookies();
+  cookieStore.set(accessCookieName(teamId), signature, {
     httpOnly: true,
     sameSite: "lax",
     path: `/team/${teamId}`,

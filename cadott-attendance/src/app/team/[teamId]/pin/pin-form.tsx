@@ -8,7 +8,11 @@ type PinFormProps = {
   teamName: string;
 };
 
-const initialState = {};
+type PinState = {
+  error?: string;
+};
+
+const initialState: PinState = {};
 
 export default function PinForm({ teamId, teamName }: PinFormProps) {
   const [state, action, pending] = useActionState(
