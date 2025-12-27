@@ -14,9 +14,9 @@ function formatDate(value: Date) {
 
 export async function GET(
   _request: Request,
-  { params }: { params: { teamId: string } },
+  { params }: { params: Promise<{ teamId: string }> },
 ) {
-  const { teamId } = params;
+  const { teamId } = await params;
   const team = await prisma.team.findUnique({ where: { id: teamId } });
 
   if (!team) {
